@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Juan Academy{% endblock %}</title>
+    {% load static %} {# Assicurati che questo sia qui per usare {% static %} #}
+    <link rel="stylesheet" href="{% static 'core/css/style.css' %}">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            {# MODIFICA QUI: Cambia 'home' in 'homepage' #}
+            <a href="{% url 'core:homepage' %}">
+                {# Qui potresti mettere un logo testuale o un'immagine segnaposto #}
+                <h2>Juan Academy</h2>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                {# MODIFICA QUI: Cambia 'home' in 'homepage' #}
+                <li><a href="{% url 'core:homepage' %}">Home</a></li>
+                <li><a href="{% url 'core:course_list' %}">Corsi</a></li>
+                {% if user.is_authenticated %}
+                    {% if user.is_student %}
+                        <li><a href="{% url 'core:student_dashboard' %}">La mia Dashboard Studente</a></li>
+                        <li><a href="{% url 'core:enrolled_courses' %}">I miei Corsi</a></li>
+                    {% elif user.is_teacher %}
+                        <li><a href="{% url 'core:teacher_dashboard' %}">La mia Dashboard Insegnante</a></li>
+                        <li><a href="{% url 'core:create_course' %}">Crea Corso</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'core:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'core:register' %}">Registrati</a></li>
+                    <li><a href="{% url 'core:login' %}">Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}
+        {# Il contenuto specifico di ogni pagina andrà qui #}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Juan Academy. Tutti i diritti riservati.</p>
+    </footer>
+</body>
+</html>

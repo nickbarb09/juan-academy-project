@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage Juan Academy</title>
+    </head>
+<body>
+    <h1>Benvenuto nella Juan Academy!</h1>
+    <p>Esplora i nostri corsi e inizia il tuo percorso di apprendimento.</p>
+
+    {% if user.is_authenticated %}
+        <p>Ciao, {{ user.get_full_name|default:user.username }}!</p>
+        {% if user.is_student %}
+            <p><a href="{% url 'core:student_dashboard' %}">Vai alla tua Dashboard Studente</a></p>
+        {% endif %}
+        {% if user.is_teacher %}
+            <p><a href="{% url 'core:teacher_dashboard' %}">Vai alla tua Dashboard Insegnante</a></p>
+        {% endif %}
+        <p><a href="{% url 'logout' %}">Logout</a></p>
+    {% else %}
+        <p>
+            <a href="{% url 'core:register' %}">Registrati</a> |
+            <a href="{% url 'core:login' %}">Accedi</a>
+        </p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Corsi in Evidenza:</h2>
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <h3><a href="{% url 'core:course_detail' course.pk %}">{{ course.title }}</a></h3>
+                    <p>{{ course.description|truncatechars:150 }}</p>
+                    <p>Insegnante: {{ course.teacher.get_full_name|default:course.teacher.username }}</p>
+                    <p>Prezzo: {{ course.price }} €</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nessun corso disponibile al momento.</p>
+    {% endif %}
+
+</body>
+</html>

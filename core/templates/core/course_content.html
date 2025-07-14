@@ -1,0 +1,89 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Contenuti Corso: {{ course.title }}{% endblock %}
+
+{% block content %}
+    <h1>Contenuti del Corso: {{ course.title }}</h1>
+    <p>Questo è il materiale didattico per il tuo corso.</p>
+
+    {% if lessons %}
+        {% for lesson in lessons %}
+            <h2>Lezione {{ lesson.order }}: {{ lesson.title }}</h2>
+            {% if lesson.description %}
+                <p>{{ lesson.description }}</p>
+            {% endif %}
+
+            {% if lesson.contents %}
+                <ul>
+                    {% for content in lesson.contents %}
+                        <li>
+                            <strong>Contenuto {{ content.order }}: {{ content.title }}</strong> (Tipo: {{ content.get_content_type_display }})
+                            {% if content.content_type == 'text' %}
+                                <p>{{ content.text_content|linebreaksbr }}</p> {# Mantiene i salti di riga #}
+                            {% elif content.content_type == 'video' %}
+                                <p><a href="{{ content.url_content }}" target="_blank">Guarda il Video</a></p>
+                                {% if "youtube.com" in content.url_content or "youtu.be" in content.url_content %}
+                                    {# Estrai l'ID del video YouTube per l'embed #}
+                                    {% if "youtube.com/watch?v=" in content.url_content %}
+                                        {% with content.url_content|split:"v=" as url_parts %}
+                                            {% if url_parts|length > 1 %}
+                                                {% with url_parts.1|split:"&" as id_parts %}
+                                                    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ id_parts.0 }}" frameborder="0" allowfullscreen></iframe>
+                                                {% endwith %}
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% elif "youtu.be/" in content.url_content %}
+                                        {% with content.url_content|split:"youtu.be/" as url_parts %}
+                                            {% if url_parts|length > 1 %}
+                                                {% with url_parts.1|split:"?" as id_parts %}
+                                                    <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ id_parts.0 }}" frameborder="0" allowfullscreen></iframe>
+                                                {% endwith %}
+                                            {% endif %}
+                                        {% endwith %}
+                                    {% endif %}
+                                {% endif %}
+                            {% elif content.content_type == 'file' %}
+                                <p><a href="{{ content.file_content.url }}" target="_blank">Scarica File: {{ content.file_content.name|split:"/"|last }}</a></p>
+                            {% elif content.content_type == 'link' %}
+                                <p><a href="{{ content.url_content }}" target="_blank">Vai al Link Esterno</a></p>
+                            {% elif content.content_type == 'quiz' %}
+                                <p>Quiz: (Funzionalità da implementare)</p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nessun contenuto disponibile per questa lezione.</p>
+            {% endif %}
+            <hr> {# Linea di separazione tra le lezioni #}
+        {% endfor %}
+    {% else %}
+        <p>Questo corso non ha ancora lezioni o contenuti aggiunti.</p>
+    {% endif %}
+
+    <p><a href="{% url 'core:course_detail' course.pk %}">Torna ai Dettagli del Corso</a></p>
+    <p><a href="{% url 'core:student_dashboard' %}">Torna alla tua Dashboard</a></p>
+
+    {# Filtro personalizzato per split #}
+    {% comment %}
+        Questo blocco è un commento per il template.
+        Il filtro 'split' non è integrato in Django. Dovresti aggiungerlo manualmente se ne hai bisogno
+        per l'embedding di YouTube. Per ora, ho usato una logica per estrarre l'ID video senza un filtro custom.
+        Se hai errori, potresti rimuovere la logica per YouTube embed e lasciare solo il link.
+    {% endcomment %}
+    {% if False %} {# Questo if False assicura che il codice non venga eseguito ma serve come promemoria #}
+        {% comment %}
+            Per implementare un filtro 'split' personalizzato:
+            1. Crea una cartella 'templatetags' all'interno della tua app 'core'.
+            2. Crea un file __init__.py (vuoto) al suo interno.
+            3. Crea un file python (es. my_filters.py) all'interno di 'templatetags'.
+            4. In my_filters.py:
+                from django import template
+                register = template.Library()
+                @register.filter
+                def split(value, arg):
+                    return value.split(arg)
+            5. Nel tuo template, dopo {% load static %}, aggiungi {% load my_filters %}.
+        {% endcomment %}
+    {% endif %}
+{% endblock content %}

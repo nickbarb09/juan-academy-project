@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Studente</title>
+    </head>
+<body>
+    <h1>Benvenuto nella tua Dashboard Studente, {{ user.get_full_name|default:user.username }}!</h1>
+    <p>Questa è la tua area personale.</p>
+
+    <p><a href="{% url 'core:homepage' %}">Torna alla Homepage</a></p>
+    <p><a href="{% url 'logout' %}">Logout</a></p>
+    <hr>
+
+    <h2>I tuoi Corsi Iscritti:</h2>
+    {% if enrolled_courses %}
+        <ul>
+            {% for enrollment in enrolled_courses %}
+                <li>
+                    <h3><a href="{% url 'core:course_detail' enrollment.course.pk %}">{{ enrollment.course.title }}</a></h3>
+                    <p>Iscritto il: {{ enrollment.enrolled_at|date:"d M Y" }}</p>
+                    <p>Stato:
+                        {% if enrollment.completed %}
+                            Completato
+                            {% if enrollment.completion_date %}
+                                (il {{ enrollment.completion_date|date:"d M Y" }})
+                            {% endif %}
+                        {% else %}
+                            In Corso
+                        {% endif %}
+                    </p>
+                    <p>{{ enrollment.course.description|truncatechars:150 }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Non sei ancora iscritto a nessun corso. Esplora i nostri <a href="{% url 'core:homepage' %}">corsi disponibili</a>!</p>
+    {% endif %}
+
+    </body>
+</html>

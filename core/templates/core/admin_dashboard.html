@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Amministratore</title>
+</head>
+<body>
+    <h1>Benvenuto nella Dashboard Amministratore, {{ user.username }}!</h1>
+    <p>Questa è un'area personalizzata per gli amministratori.</p>
+    <p>Per la gestione completa, ti suggerisco di visitare il pannello di amministrazione di Django.</p>
+    <p><a href="{% url 'admin:index' %}">Vai al Pannello di Amministrazione di Django</a></p>
+
+    <p><a href="{% url 'core:logout' %}">Logout</a></p>
+    <p><a href="{% url 'core:home' %}">Torna alla Home</a></p>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrati</title>
+    </head>
+<body>
+    <h1>Registrati alla Juan Academy</h1>
+    <p><a href="{% url 'core:homepage' %}">Torna alla Homepage</a></p>
+    <hr>
+
+    <form method="post">
+        {% csrf_token %} {# Questo è ESSENZIALE per la sicurezza in Django #}
+        {{ form.as_p }} {# Questo renderizza tutti i campi del form come paragrafi #}
+        <button type="submit">Registrati</button>
+    </form>
+
+    <p>Hai già un account? <a href="{% url 'core:login' %}">Accedi qui</a>.</p>
+
+</body>
+</html>

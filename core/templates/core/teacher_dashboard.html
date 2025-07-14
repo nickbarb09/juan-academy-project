@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Insegnante</title>
+</head>
+<body>
+    <h1>Dashboard Insegnante - Benvenuto, {{ user.username }}!</h1>
+
+    <p>Qui puoi gestire i tuoi corsi e vedere i tuoi studenti.</p>
+
+    <h2>I Miei Corsi Insegnati:</h2>
+    {% if taught_courses %}
+        <ul>
+            {% for course in taught_courses %}
+                <li>
+                    <h3>{{ course.title }}</h3>
+                    <p>Descrizione: {{ course.description }}</p>
+                    <p>Difficoltà: {{ course.get_difficulty_display }}</p>
+                    <p>Stato: {{ course.get_status_display }}</p>
+                    <p>Prezzo: {{ course.price }}€</p>
+                    <p>Studenti Iscritti: {{ course.enrollments.count }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Non insegni ancora nessun corso. Inizia a crearne uno!</p>
+    {% endif %}
+
+    <p><a href="{% url 'core:logout' %}">Logout</a></p>
+    {# MODIFICA QUI: Cambia 'home' in 'homepage' #}
+    <p><a href="{% url 'core:homepage' %}">Torna alla Home</a></p>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juan Academy - Home</title>
+</head>
+<body>
+    <h1>{{ welcome_message }}</h1>
+
+    {% if user.is_authenticated %}
+        <p>Ciao, {{ user.username }}! Sei autenticato.</p>
+        {% if user.is_superuser %}
+            <p><a href="{% url 'admin:index' %}">Vai al Pannello di Amministrazione</a></p>
+        {% elif user.is_student %}
+            <p><a href="{% url 'core:student_dashboard' %}">Vai alla tua Dashboard Studente</a></p>
+        {% elif user.is_teacher %}
+            <p><a href="{% url 'core:teacher_dashboard' %}">Vai alla tua Dashboard Insegnante</a></p>
+        {% endif %}
+        <p><a href="{% url 'core:logout' %}">Logout</a></p>
+    {% else %}
+        <p>Benvenuto/a visitatore! <a href="{% url 'core:login' %}">Accedi</a> o <a href="{% url 'core:register' %}">Registrati</a>.</p>
+    {% endif %}
+
+    <h2>Corsi Recenti</h2>
+    {% if recent_courses %}
+        <ul>
+            {% for course in recent_courses %}
+                <li>
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}" width="100">
+                    {% endif %}
+                    <a href="{% url 'core:course_detail' course.pk %}">{{ course.title }}</a> - {{ course.teacher.get_full_name }} ({{ course.price }}€)
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nessun corso recente disponibile al momento.</p>
+    {% endif %}
+
+    <p><a href="{% url 'core:course_list' %}">Visualizza tutti i corsi disponibili</a></p>
+</body>
+</html>

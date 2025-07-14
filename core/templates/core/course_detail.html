@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dettagli Corso: {{ course.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ course.title }}</h1>
+    {% if course.image %}
+        <img src="{{ course.image.url }}" alt="{{ course.title }}" width="300">
+    {% endif %}
+    <p><strong>Descrizione:</strong> {{ course.description }}</p>
+    <p><strong>Insegnante:</strong> {{ course.teacher.get_full_name }} ({{ course.teacher.email }})</p>
+    <p><strong>Prezzo:</strong> {{ course.price }}€</p>
+    <p><strong>Data Inizio:</strong> {{ course.start_date|default:"Non specificata" }}</p>
+    <p><strong>Data Fine:</strong> {{ course.end_date|default:"Non specificata" }}</p>
+    <p><strong>Difficoltà:</strong> {{ course.get_difficulty_display }}</p>
+    <p><strong>Stato:</strong> {{ course.get_status_display }}</p>
+    <p><strong>Categoria:</strong> {{ course.category|default:"Non specificata" }}</p>
+
+    {% if user.is_authenticated and user.is_student %}
+        {% if is_enrolled %}
+            <p>Sei già iscritto a questo corso.</p>
+            <form action="{% url 'core:course_content' course.pk %}" method="get">
+                <button type="submit">Accedi ai Contenuti del Corso</button>
+            </form>
+        {% else %}
+            <form action="{% url 'core:enroll_course' course.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Iscriviti a questo Corso</button>
+            </form>
+        {% endif %}
+    {% elif user.is_authenticated and not user.is_student %}
+        <p>Solo gli studenti possono iscriversi ai corsi.</p>
+    {% else %}
+        <p>Per iscriverti a questo corso, devi prima <a href="{% url 'core:login' %}">accedere</a> o <a href="{% url 'core:register' %}">registrarti come studente</a>.</p>
+    {% endif %}
+
+    <p><a href="{% url 'core:course_list' %}">Torna alla lista dei corsi</a></p>
+    <p><a href="{% url 'core:home' %}">Torna alla Home</a></p>
+{% endblock content %}

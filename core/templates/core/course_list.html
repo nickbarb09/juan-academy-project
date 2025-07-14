@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juan Academy - Tutti i Corsi</title>
+</head>
+<body>
+    <h1>Tutti i Nostri Corsi</h1>
+
+    {% if courses %}
+        <ul>
+            {% for course in courses %}
+                <li>
+                    <h3><a href="{% url 'core:course_detail' course.pk %}">{{ course.title }}</a></h3>
+                    <p>Insegnante: {{ course.teacher.get_full_name }}</p>
+                    <p>Prezzo: {{ course.price }}€</p>
+                    {% if course.image %}
+                        <img src="{{ course.image.url }}" alt="{{ course.title }}" width="150">
+                    {% endif %}
+                    <p>Difficoltà: {{ course.get_difficulty_display }}</p>
+                    <p>Categoria: {{ course.category|default:"Nessuna" }}</p>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Nessun corso disponibile al momento.</p>
+    {% endif %}
+
+    <p><a href="{% url 'core:home' %}">Torna alla Home</a></p>
+</body>
+</html>
